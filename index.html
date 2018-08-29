@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SHA256 Web</title>
+  <meta name="description" content="Web app for easy SHA256 hashing">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./css/template.min.css">
+  <link rel="stylesheet" href="./css/night.css">
+  <link rel="shortcut icon" href="./img/favicon.svg" type="image/x-icon">
+</head>
+
+<body class="light">
+  <header role="banner">
+    <a href="./">
+      <h1>SHA256 Hash</h1>
+    </a>
+    <nav>
+      <img src="./img/sun.svg" alt="Toggle Night Mode" id="nightModeSwitch" onclick="toggleNightMode()">
+    </nav>
+  </header>
+
+  <main role="application">
+    <div class="row" role="separator">
+      <section class="light container w-2">
+        <h2>Input:</h2>
+        <div class="row">
+          <textarea id="input" onkeyup="setResult()" autofocus></textarea>
+        </div>
+        <div class="row">
+          <section class="light container w-1">
+            <button onclick="copyHash(getId('result'))">Copy</button>
+            <button onclick="clearAll()">Clear</button>
+          </section>
+        </div>
+        <div class="row">
+          <section class="light container w-1">
+            <div class="row">
+              <input type="checkbox" name="hash-lines" id="hash-lines" onclick="setResult()">
+              <label for="hash-lines">Hash each new line</label>    
+            </div>
+            <div class="row">
+              <input type="checkbox" name="upper-case" id="upper-case" onclick="setResult()">
+              <label for="upper-case">Use upper case</label>    
+            </div>
+          </section>
+        </div>
+        <div class="row">
+          <section class="light container w-1">
+            <label for="looper">Iterations: </label>
+            <input type="number" name="looper" id="looper" value="1" onkeyup="setResult()" min="1">      
+          </section>
+        </div>
+        </section>
+      <section class="light container w-1">
+        <h2>Output:</h2>
+        <textarea id="result"></textarea>
+      </section>
+    </div>
+  </main>
+  <footer>
+    <p>Copyright &copy; 2018 Eric Nguyen</p>
+  </footer>
+
+  <script src="./js/sha256.js"></script>
+  <script src="./js/index.js"></script>
+  <script src="./js/night.js"></script>
+  <script>
+    function selectId(id) {
+      document.getElementById(id).select();
+    }
+
+    function getId(id) {
+      return document.getElementById(id);
+    }
+
+    function setIdVal(id, res) {
+      document.getElementById(id).value = res;
+    }
+
+    function clearIdVal(id) {
+      document.getElementById(id).value = '';
+    }
+
+    function focusId(id) {
+      document.getElementById(id).focus();
+    }
+
+    function getIdVal(id) {
+      return document.getElementById(id).value;
+    }
+
+    function getIdHash(id) {
+      return generate_hash(
+        input = getIdVal(id),
+        eachLine = getId('hash-lines').checked,
+        upperCase = getId('upper-case').checked
+      );
+    }
+
+    function setResult() {
+      setIdVal('result', getIdHash('input'));
+
+      for (let i = 0; i < getIdVal('looper') - 1; i++) {
+        setIdVal('result', getIdHash('result'));
+      }
+
+      if (getIdVal('input') === '') {
+        setIdVal('result', '');
+      }
+
+      getId('result').scrollTop = getId('result').scrollHeight;
+    }
+
+    function clearAll() {
+      clearIdVal('input');
+      clearIdVal('result');
+      focusId('input');
+    }
+
+    function copyHash() {
+      selectId('result');
+      document.execCommand('Copy');
+    }
+  </script>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+</body>
+
+</html>
